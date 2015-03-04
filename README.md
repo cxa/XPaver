@@ -1,6 +1,6 @@
 # SimpleXPath
 
-Locate XML Element and evaluate XPath Function. Written in Swift 1.2.
+Locate XML element and evaluate XPath function. Written in Swift 1.2.
 
 ## Installation
 
@@ -92,7 +92,6 @@ For namespaces that contain a prefix such as `xmlns:dc="http://purl.org/dc/eleme
 		
 ## About Me
 
-* GitHub: <https://github.com/cxa>
 * Twitter: [@_cxa](https://twitter.com/_cxa)
 * Apps available in App Store: <http://lazyapps.com>
 * PayPal: xianan.chen+paypal 📧 gmail.com, buy me a cup of coffee if you find it's useful for you.
