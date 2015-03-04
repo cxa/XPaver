@@ -65,15 +65,39 @@ You can find more usage under test cases.
 
 ## `XMLElement`
 
-You can also apply XPath to `XMLElement`. Using below properties and or methods to access informations.
+You can also apply XPath to `XMLElement`.
 
-	var tag: String? { get }
+Using below properties and or methods to access informations.
+
+	/// Tag name
+    var tag: String? { get }
+
+    /// Content
     var content: String? { get }
-    var parent: XMLElement? { get }
-    var children: SequenceOf<XMLElement>? { get }
-    var prev: XMLElement? { get }
-    var next: XMLElement? { get }
-    var attributes: SequenceOf<XMLAttribute>? { get }
+
+    /// Parent
+    var parent: SimpleXPath.XMLElement? { get }
+
+    /// Children
+    var children: SequenceOf<SimpleXPath.XMLElement>? { get }
+
+    /// First child
+    var firstChild: SimpleXPath.XMLElement? { get }
+
+    /// Get child at `index`,
+    /// If `index` is overflow, return nil
+    func childAtIndex(index: Int) -> SimpleXPath.XMLElement?
+
+    /// Previous sibling
+    var prev: SimpleXPath.XMLElement? { get }
+
+    /// Next sibling
+    var next: SimpleXPath.XMLElement? { get }
+
+    /// Attributes
+    var attributes: SequenceOf<SimpleXPath.XMLAttribute>? { get }
+
+    /// Attribute value
     func valueForAttribue(attr: String, inNamespace nspace: String? = default) -> String?
     
 ## Default Namespaces

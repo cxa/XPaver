@@ -34,11 +34,11 @@ class AtomXPathTests: XCTestCase {
     if let els = atomDoc?.selectElements("/atom:feed/atom:entry/atom:link") {
       var i = 0
       for el in els {
-        XCTAssertEqual(el.tag!, "link", "tag should be `link`")
+        XCTAssertEqual(el.tag!, "link", "Tag should be `link`")
         i++
       }
       
-      XCTAssertEqual(i, 3, "links count should be 3")
+      XCTAssertEqual(i, 3, "Links count should be 3")
     } else {
       XCTFail("could not select els by `/atom:feed/atom:entry/atom:link`")
     }
@@ -48,26 +48,36 @@ class AtomXPathTests: XCTestCase {
     if let els = atomDoc?.selectElements("/atom:feed/atom:entry/dc:language") {
       var i = 0
       for el in els {
-        XCTAssertEqual(el.tag!, "language", "tag should be `language`")
-        XCTAssertEqual(el.content!, "en-us", "el content should be `en-us`")
+        XCTAssertEqual(el.tag!, "language", "Tag should be `language`")
+        XCTAssertEqual(el.content!, "en-us", "Element content should be `en-us`")
         i++
       }
       
-      XCTAssertEqual(i, 1, "languages count should be 1")
+      XCTAssertEqual(i, 1, "Languages count should be 1")
     } else {
-      XCTFail("could not select els by `/atom:feed/atom:entry/dc:language`")
+      XCTFail("Could not select els by `/atom:feed/atom:entry/dc:language`")
     }
   }
   
   func testNonRootElement() {
     if let entry = atomDoc?.selectFirstElement("/atom:feed/atom:entry[1]") {
       if let name = entry.selectFirstElement("./atom:author/atom:name") {
-        XCTAssertEqual(name.tag!, "name", "tag should be `name`")
+        XCTAssertEqual(name.tag!, "name", "/Tag should be `name`")
       } else {
-        XCTFail("could not select el by `./atom:author/atom:name`")
+        XCTFail("Could not select el by `./atom:author/atom:name`")
       }
     } else {
-      XCTFail("could not select el by `/atom:feed/atom:entry[1]`")
+      XCTFail("Could not select el by `/atom:feed/atom:entry[1]`")
+    }
+  }
+  
+  func testChildAccess() {
+    if let titleEl = atomDoc?.rootElement.firstChild {
+      XCTAssertEqual(titleEl.tag!, "title", "First child should be `title`")
+    }
+    
+    if let entryEl = atomDoc?.rootElement.childAtIndex(6) {
+      XCTAssertEqual(entryEl.tag!, "entry", "Child at index 6 should be `entry`")
     }
   }
   
@@ -81,7 +91,7 @@ class AtomXPathTests: XCTestCase {
         }
         
         XCTAssertEqual(expected, real, "attributes should be `\(expected)`")
-        XCTAssertEqual(link2.valueForAttribue("rel")!, "alternate", "value for rel should be `alternate`")
+        XCTAssertEqual(link2.valueForAttribue("rel")!, "alternate", "Value for rel should be `alternate`")
       } else {
         XCTFail("could not get attributes for link2")
       }
@@ -94,12 +104,12 @@ class AtomXPathTests: XCTestCase {
     if let result = atomDoc?.evaluate("count(/atom:feed/atom:entry/atom:link)") {
       switch result {
       case .double(let c):
-        XCTAssertEqual(c, 3, "link count should be 3")
+        XCTAssertEqual(c, 3, "Link count should be 3")
       default:
-        XCTFail("wrong result type")
+        XCTFail("Wrong result type")
       }
     } else {
-      XCTFail("could not eval function for count(/atom:feed/atom:entry/atom:link)")
+      XCTFail("Could not eval function for count(/atom:feed/atom:entry/atom:link)")
     }
   }
   
@@ -109,10 +119,10 @@ class AtomXPathTests: XCTestCase {
       case .string(let s):
         XCTAssertEqual(s, "en-us", "dc:language text shoud be `en-us`")
       default:
-        XCTFail("wrong result type")
+        XCTFail("Wrong result type")
       }
     } else {
-      XCTFail("could not eval function for string(/atom:feed/atom:entry/dc:language[1])")
+      XCTFail("Could not eval function for string(/atom:feed/atom:entry/dc:language[1])")
     }
   }
   
@@ -122,10 +132,10 @@ class AtomXPathTests: XCTestCase {
       case .bool(let b):
         XCTAssertEqual(b, true, "dc:language text shoud be `en-us`")
       default:
-        XCTFail("wrong result type")
+        XCTFail("Wrong result type")
       }
     } else {
-      XCTFail("could not eval function for boolean(/atom:feed/atom:entry/dc:language[1][.='en-us'])")
+      XCTFail("Could not eval function for boolean(/atom:feed/atom:entry/dc:language[1][.='en-us'])")
     }
   }
   

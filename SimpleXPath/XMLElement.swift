@@ -67,6 +67,31 @@ public extension XMLElement {
     }
   }
   
+  /// First child
+  var firstChild: XMLElement? {
+    if let childrenSeq = children {
+      for el in childrenSeq {
+        return el
+      }
+    }
+    
+    return nil
+  }
+  
+  /// Get child at `index`,
+  /// If `index` is overflow, return nil
+  func childAtIndex(index: Int) -> XMLElement? {
+    if let seq = children {
+      for (i, el) in enumerate(seq) {
+        if i == index {
+          return el
+        }
+      }
+    }
+    
+    return nil
+  }
+  
   /// Previous sibling
   var prev: XMLElement? {
     let p = _node.memory.prev
