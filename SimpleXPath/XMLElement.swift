@@ -233,6 +233,16 @@ extension XMLElement: XPathFunctionEvaluating {
   
 }
 
+// MARK:
+public extension XMLElement {
+  
+  subscript(attributeName: String) -> String? {
+    return valueForAttribute(attributeName)
+  }
+  
+}
+
+// MARK: privates
 private extension XMLElement {
   
   func _registerNS(ctx: xmlXPathContextPtr, xpath: String) {

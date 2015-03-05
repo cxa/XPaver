@@ -16,7 +16,7 @@ extension String {
   }
   
   var namespacePrefixs: Set<String>? {
-    if let regexp = NSRegularExpression(pattern: "(\\w+):[^:]", options: .CaseInsensitive, error: nil) {
+    if let regexp = NSRegularExpression(pattern: "(\\w+):[^\\W:]", options: .CaseInsensitive, error: nil) {
       if let matches = regexp.matchesInString(self, options: nil, range: NSMakeRange(0, count(self.utf16))) as? [NSTextCheckingResult] {
         return Set(matches.map {
           let range = $0.rangeAtIndex(1)

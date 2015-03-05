@@ -91,7 +91,7 @@ class AtomXPathTests: XCTestCase {
         }
         
         XCTAssertEqual(expected, real, "attributes should be `\(expected)`")
-        XCTAssertEqual(link2.valueForAttribute("rel")!, "alternate", "Value for rel should be `alternate`")
+        XCTAssertEqual(link2["rel"]!, "alternate", "Value for rel should be `alternate`")
       } else {
         XCTFail("could not get attributes for link2")
       }
@@ -136,6 +136,12 @@ class AtomXPathTests: XCTestCase {
       }
     } else {
       XCTFail("Could not eval function for boolean(/atom:feed/atom:entry/dc:language[1][.='en-us'])")
+    }
+  }
+  
+  func testSubscript() {
+    if let link = atomDoc?.rootElement.childAtIndex(2) {
+      XCTAssertEqual(link["rel"]!, "self", "link rel should be `self`")
     }
   }
   
