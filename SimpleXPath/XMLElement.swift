@@ -139,7 +139,7 @@ public extension XMLElement {
   }
   
   /// Attribute value
-  func valueForAttribue(attr: String, inNamespace nspace: String? = nil) -> String? {
+  func valueForAttribute(attr: String, inNamespace nspace: String? = nil) -> String? {
     return _valueForAttribute(_node, attr.xmlCharPointer, nspace)
   }
   

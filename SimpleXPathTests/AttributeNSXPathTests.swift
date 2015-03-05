@@ -48,7 +48,7 @@ class AttributeNSXPathTests: XCTestCase {
   
   func testAttributeValueInNamespace() {
     if let good2 = attrDoc.selectFirstElement("/w3:x/w3:good[2]"){
-      if let val = good2.valueForAttribue("a", inNamespace: "http://www.w3.org") {
+      if let val = good2.valueForAttribute("a", inNamespace: "http://www.w3.org") {
         XCTAssertEqual(val, "2", "a in http://www.w3.org should be `2`")
       } else {
         XCTFail("could not get b in n1")

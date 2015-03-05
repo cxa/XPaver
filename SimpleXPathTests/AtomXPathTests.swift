@@ -91,7 +91,7 @@ class AtomXPathTests: XCTestCase {
         }
         
         XCTAssertEqual(expected, real, "attributes should be `\(expected)`")
-        XCTAssertEqual(link2.valueForAttribue("rel")!, "alternate", "Value for rel should be `alternate`")
+        XCTAssertEqual(link2.valueForAttribute("rel")!, "alternate", "Value for rel should be `alternate`")
       } else {
         XCTFail("could not get attributes for link2")
       }
