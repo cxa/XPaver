@@ -233,7 +233,7 @@ extension XMLElement: XPathFunctionEvaluating {
   
 }
 
-// MARK:
+// MARK: subscription
 public extension XMLElement {
   
   subscript(attributeName: String) -> String? {
@@ -258,14 +258,14 @@ private extension XMLElement {
       let unreg = prefixsInsideXPath.subtract(registeredNS)
       for prefix in unreg  {
         let root = xmlDocGetRootElement(_node.memory.doc)
-        let ns = xmlSearchNs(_node.memory.doc, root, prefix.xmlCharPointer);
+        let ns = xmlSearchNs(_node.memory.doc, root, prefix.xmlCharPointer)
         if ns != nil {
           xmlXPathRegisterNs(ctx, ns.memory.prefix, ns.memory.href)
         } else {
           let xpathObj = xmlXPathEval("string(//namespace::\(prefix))", ctx)
           if xpathObj != nil && strlen(unsafeBitCast(xpathObj.memory.stringval, UnsafePointer<Int8>.self)) > 0 {
             xmlXPathRegisterNs(ctx, prefix.xmlCharPointer, xpathObj.memory.stringval)
-            xmlNewNs(xmlDocGetRootElement(_node.memory.doc), xpathObj.memory.stringval, prefix.xmlCharPointer)
+            xmlNewNs(root, xpathObj.memory.stringval, prefix.xmlCharPointer)
           } else {
             fatalError("No chance to register namespace for `\(prefix)`, you can register it on XMLDocument by `registerDefaultNamespace(:, prefix:)`")
           }
