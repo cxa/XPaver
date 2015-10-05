@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 lazyapps. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for XPath.
 FOUNDATION_EXPORT double XPathVersionNumber;

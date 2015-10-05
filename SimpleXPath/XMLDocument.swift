@@ -34,9 +34,9 @@ public struct XMLDocument {
     let ianaChar = (iana as NSString).UTF8String
     switch type {
     case .XML:
-      _xmlDoc = xmlReadMemory(buffer, size, nil, ianaChar, Int32(XML_PARSE_NOBLANKS.value))
+      _xmlDoc = xmlReadMemory(buffer, size, nil, ianaChar, Int32(XML_PARSE_NOBLANKS.rawValue))
     case .HTML:
-      _xmlDoc = htmlReadMemory(buffer, size, nil, ianaChar, Int32(HTML_PARSE_NOBLANKS.value | HTML_PARSE_NOWARNING.value | HTML_PARSE_NOERROR.value))
+      _xmlDoc = htmlReadMemory(buffer, size, nil, ianaChar, Int32(HTML_PARSE_NOBLANKS.rawValue | HTML_PARSE_NOWARNING.rawValue | HTML_PARSE_NOERROR.rawValue))
     }
     
     let root = xmlDocGetRootElement(_xmlDoc)
@@ -69,7 +69,7 @@ public extension XMLDocument {
 
 extension XMLDocument: XPathLocating {
   
-  public func selectElements(withXPath: String) -> SequenceOf<XMLElement>? {
+  public func selectElements(withXPath: String) -> AnySequence<XMLElement>? {
     return rootElement.selectElements(withXPath)
   }
   

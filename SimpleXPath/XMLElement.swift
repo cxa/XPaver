@@ -46,16 +46,16 @@ public extension XMLElement {
   }
   
   /// Children
-  var children: SequenceOf<XMLElement>? {
+  var children: AnySequence<XMLElement>? {
     let c = _node.memory.children
     if c == nil {
       return nil
     }
     
-    return SequenceOf {
-      _ -> GeneratorOf<XMLElement> in
+    return AnySequence {
+      _ -> AnyGenerator<XMLElement> in
       var n = c
-      return GeneratorOf {
+      return anyGenerator {
         if n == nil {
           return nil
         }
@@ -82,7 +82,7 @@ public extension XMLElement {
   /// If `index` is overflow, return nil
   func childAtIndex(index: Int) -> XMLElement? {
     if let seq = children {
-      for (i, el) in enumerate(seq) {
+      for (i, el) in seq.enumerate() {
         if i == index {
           return el
         }
@@ -113,16 +113,16 @@ public extension XMLElement {
   }
   
   /// Attributes
-  var attributes: SequenceOf<XMLAttribute>? {
+  var attributes: AnySequence<XMLAttribute>? {
     let properties = _node.memory.properties
     if properties == nil {
       return nil
     }
     
-    return SequenceOf {
-      _ -> GeneratorOf<XMLAttribute> in
+    return AnySequence {
+      _ -> AnyGenerator<XMLAttribute> in
       var p = properties
-      return GeneratorOf {
+      return anyGenerator {
         if p == nil {
           return nil
         }
@@ -148,13 +148,13 @@ public extension XMLElement {
 // MARK: implement XPathLocating
 extension XMLElement: XPathLocating {
   
-  public func selectElements(withXPath: String) -> SequenceOf<XMLElement>? {
+  public func selectElements(withXPath: String) -> AnySequence<XMLElement>? {
     let ctx = xmlXPathNewContext(_node.memory.doc)
     ctx.memory.node = _node
     _registerNS(ctx, xpath: withXPath)
     let xpathObj = xmlXPathEval(withXPath.xmlCharPointer, ctx)
     if xpathObj == nil ||
-      xpathObj.memory.type.value != XPATH_NODESET.value ||
+      xpathObj.memory.type.rawValue != XPATH_NODESET.rawValue ||
       xpathObj.memory.nodesetval == nil ||
       xpathObj.memory.nodesetval.memory.nodeNr == 0 {
         if xpathObj != nil { xmlXPathFreeObject(xpathObj) }
@@ -162,12 +162,12 @@ extension XMLElement: XPathLocating {
     }
     
     let nodeset = xpathObj.memory.nodesetval.memory
-    if nodeset.nodeTab.memory.memory.type.value != XML_ELEMENT_NODE.value { return nil }
-    let seq = SequenceOf {
-      _ -> GeneratorOf<XMLElement> in
+    if nodeset.nodeTab.memory.memory.type.rawValue != XML_ELEMENT_NODE.rawValue { return nil }
+    let seq = AnySequence {
+      _ -> AnyGenerator<XMLElement> in
       let max = Int(nodeset.nodeNr) - 1
       var i = 0
-      return GeneratorOf {
+      return anyGenerator {
         if i > max {
           xmlXPathFreeContext(ctx)
           xmlXPathFreeObject(xpathObj)
@@ -208,15 +208,15 @@ extension XMLElement: XPathFunctionEvaluating {
       return nil
     }
     
-    let t = xpathObj.memory.type.value
+    let t = xpathObj.memory.type.rawValue
     let result: XPathFunctionResult?
-    if t == XPATH_BOOLEAN.value {
+    if t == XPATH_BOOLEAN.rawValue {
       let val = xpathObj.memory.boolval
       result = XPathFunctionResult.bool(val == 1 ? true : false)
-    } else if t == XPATH_NUMBER.value {
+    } else if t == XPATH_NUMBER.rawValue {
       let val = xpathObj.memory.floatval
       result = XPathFunctionResult.double(val)
-    } else if t == XPATH_STRING.value {
+    } else if t == XPATH_STRING.rawValue {
       let val = xpathObj.memory.stringval
       if let str = _convertXmlCharPointerToString(val) {
         result = XPathFunctionResult.string(str)

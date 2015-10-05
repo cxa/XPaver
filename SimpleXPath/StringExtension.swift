@@ -16,12 +16,11 @@ extension String {
   }
   
   var namespacePrefixs: Set<String>? {
-    if let regexp = NSRegularExpression(pattern: "(\\w+):[^\\W:]", options: nil, error: nil),
-       let matches = regexp.matchesInString(self, options: nil, range: NSMakeRange(0, count(self.utf16))) as? [NSTextCheckingResult]
-    {
+    if let regexp = try? NSRegularExpression(pattern: "(\\w+):[^\\W:]", options: []) {
+      let matches = regexp.matchesInString(self, options: [], range: NSMakeRange(0, self.utf16.count))
       return Set(matches.map {
         let range = $0.rangeAtIndex(1)
-        return (self as NSString).substringWithRange(range)
+        return NSString.substringWithRange(self)(range)
       })
     }
   
