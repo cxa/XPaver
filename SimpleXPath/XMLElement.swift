@@ -18,6 +18,13 @@ public struct XMLElement {
 
 public extension XMLElement {
   
+  /// document type
+  var documentType: XMLDocumentType {
+    let root = xmlDocGetRootElement( _node.memory.doc)
+    let name = xmlGetProp(root, _doctypeprop)
+    return strcmp(unsafeBitCast(name, UnsafePointer<Int8>.self), "0") == 0 ? .XML : .HTML
+  }
+  
   /// Tag name
   var tag: String? {
     return _convertXmlCharPointerToString(_node.memory.name)
@@ -33,6 +40,30 @@ public extension XMLElement {
     let cstr = _convertXmlCharPointerToString(c)
     free(c)
     return cstr
+  }
+  
+  /// Dump raw content, wrapper included
+  var rawContent: String? {
+    if (_node.memory.type == XML_TEXT_NODE) {
+      return content
+    }
+    
+    let buf = xmlBufferCreate()
+    
+    let size = documentType == .XML ? xmlNodeDump(buf, _node.memory.doc, _node, 0, 0) : htmlNodeDump(buf, _node.memory.doc, _node)
+    if size == -1 { return nil }
+    let cnt = _convertXmlCharPointerToString(buf.memory.content)
+    xmlBufferFree(buf)
+    return cnt
+  }
+  
+  /// inner raw content, wrapper excluded
+  var innerRawContent: String? {
+    if let raws = (children?.map { $0.rawContent ?? "" }) {
+      return raws.joinWithSeparator("").stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+    }
+    
+    return nil
   }
   
   /// Parent
@@ -141,6 +172,10 @@ public extension XMLElement {
   /// Attribute value
   func valueForAttribute(attr: String, inNamespace nspace: String? = nil) -> String? {
     return _valueForAttribute(_node, attr.xmlCharPointer, nspace)
+  }
+  
+  func unlink() {
+    xmlUnlinkNode(_node)
   }
   
 }

@@ -8,7 +8,7 @@
 
 import libxml2
 
-public enum XMLDocumentType {
+public enum XMLDocumentType: Int {
   case XML
   case HTML
 }
@@ -36,7 +36,7 @@ public struct XMLDocument {
     case .XML:
       _xmlDoc = xmlReadMemory(buffer, size, nil, ianaChar, Int32(XML_PARSE_NOBLANKS.rawValue))
     case .HTML:
-      _xmlDoc = htmlReadMemory(buffer, size, nil, ianaChar, Int32(HTML_PARSE_NOBLANKS.rawValue | HTML_PARSE_NOWARNING.rawValue | HTML_PARSE_NOERROR.rawValue))
+      _xmlDoc = htmlReadMemory(buffer, size, nil, ianaChar, Int32(HTML_PARSE_RECOVER.rawValue | HTML_PARSE_NOBLANKS.rawValue | HTML_PARSE_NOWARNING.rawValue | HTML_PARSE_NOERROR.rawValue))
     }
     
     let root = xmlDocGetRootElement(_xmlDoc)
@@ -44,6 +44,8 @@ public struct XMLDocument {
     if _xmlDoc == nil || root == nil {
       return nil
     }
+    
+    xmlNewProp(root, _doctypeprop, "\(type.rawValue)")
   }
   
   public init?(string s: String, documentType type: XMLDocumentType = .XML, encoding enc: NSStringEncoding = NSUTF8StringEncoding) {
@@ -86,3 +88,5 @@ extension XMLDocument: XPathFunctionEvaluating {
   }
   
 }
+
+let _doctypeprop = "__simple_xpath_doctype"

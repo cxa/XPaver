@@ -141,8 +141,20 @@ class AtomXPathTests: XCTestCase {
   
   func testSubscript() {
     if let link = atomDoc?.rootElement.childAtIndex(2) {
-      XCTAssertEqual(link["rel"]!, "self", "link rel should be `self`")
+      XCTAssertEqual(link["rel"], "self", "link rel should be `self`")
     }
+  }
+  
+  func testDocumentType() {
+    XCTAssertEqual(atomDoc.selectFirstElement("//atom:author/atom:name")?.documentType, XMLDocumentType.XML)
+  }
+  
+  func testRawContents() {
+    XCTAssertEqual(atomDoc.selectFirstElement("//atom:author/atom:name")?.rawContent, "<name>John <last>Doe</last></name>")
+  }
+  
+  func testInnerRawContents() {
+    XCTAssertEqual(atomDoc.selectFirstElement("//atom:author/atom:name")?.innerRawContent, "John <last>Doe</last>")
   }
   
 }
