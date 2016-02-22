@@ -39,6 +39,7 @@ public struct XMLDocument {
       _xmlDoc = htmlReadMemory(buffer, size, nil, ianaChar, Int32(HTML_PARSE_RECOVER.rawValue | HTML_PARSE_NOBLANKS.rawValue | HTML_PARSE_NOWARNING.rawValue | HTML_PARSE_NOERROR.rawValue))
     }
     
+    _docWrapper = _XMLDocWrapper(doc: _xmlDoc)
     let root = xmlDocGetRootElement(_xmlDoc)
     rootElement = XMLElement(_node: root)
     if _xmlDoc == nil || root == nil {
@@ -58,6 +59,8 @@ public struct XMLDocument {
   }
   
   private let _xmlDoc: xmlDocPtr
+  
+  private let _docWrapper: _XMLDocWrapper
   
 }
 
@@ -90,3 +93,17 @@ extension XMLDocument: XPathFunctionEvaluating {
 }
 
 let _doctypeprop = "__simple_xpath_doctype"
+
+private final class _XMLDocWrapper {
+  
+  let doc: xmlDocPtr
+  
+  init(doc: xmlDocPtr) {
+    self.doc = doc
+  }
+  
+  deinit {
+    xmlFreeDoc(doc)
+  }
+  
+}

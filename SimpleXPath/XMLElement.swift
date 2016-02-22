@@ -49,7 +49,6 @@ public extension XMLElement {
     }
     
     let buf = xmlBufferCreate()
-    
     let size = documentType == .XML ? xmlNodeDump(buf, _node.memory.doc, _node, 0, 0) : htmlNodeDump(buf, _node.memory.doc, _node)
     if size == -1 { return nil }
     let cnt = _convertXmlCharPointerToString(buf.memory.content)
@@ -153,7 +152,7 @@ public extension XMLElement {
     return AnySequence {
       _ -> AnyGenerator<XMLAttribute> in
       var p = properties
-      return anyGenerator {
+      return AnyGenerator {
         if p == nil {
           return nil
         }
@@ -202,7 +201,7 @@ extension XMLElement: XPathLocating {
       _ -> AnyGenerator<XMLElement> in
       let max = Int(nodeset.nodeNr) - 1
       var i = 0
-      return anyGenerator {
+      return AnyGenerator {
         if i > max {
           xmlXPathFreeContext(ctx)
           xmlXPathFreeObject(xpathObj)
@@ -211,7 +210,7 @@ extension XMLElement: XPathLocating {
         
         let node = nodeset.nodeTab.advancedBy(i)
         let el = XMLElement(_node: node.memory)
-        i++
+        i += 1
         return el
       }
     }
@@ -283,11 +282,14 @@ private extension XMLElement {
   func _registerNS(ctx: xmlXPathContextPtr, xpath: String) {
     if let prefixsInsideXPath = xpath.namespacePrefixs {
       var registeredNS = Set<String>()
-      for (var ns = _node.memory.nsDef; ns != nil; ns = ns.memory.next) {
+      var ns = _node.memory.nsDef;
+      while (ns != nil) {
         if let prefix = _convertXmlCharPointerToString(ns.memory.prefix) {
           xmlXPathRegisterNs(ctx, ns.memory.prefix, ns.memory.href)
           registeredNS.insert(prefix)
         }
+        
+        ns = ns.memory.next
       }
       
       let unreg = prefixsInsideXPath.subtract(registeredNS)
@@ -333,7 +335,7 @@ private extension XMLElement {
       return nil
     }
     
-    return String.fromCString(unsafeBitCast(xmlCharP, UnsafePointer<CChar>.self))
+    return String.fromCStringRepairingIllFormedUTF8(unsafeBitCast(xmlCharP, UnsafePointer<CChar>.self)).0
   }
   
 }
