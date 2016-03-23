@@ -11,11 +11,12 @@
 		E0594F1E1A9989A800BF988A /* MultipleDefaultNamespacesXPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0594F1D1A9989A800BF988A /* MultipleDefaultNamespacesXPathTests.swift */; };
 		E0594F201A998FCB00BF988A /* AttributeWithNS.xml in Resources */ = {isa = PBXBuildFile; fileRef = E0594F1F1A998FCB00BF988A /* AttributeWithNS.xml */; };
 		E0594F231A998FFF00BF988A /* AttributeNSXPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0594F221A998FFF00BF988A /* AttributeNSXPathTests.swift */; };
+		E069751C1CA2624F00CFAD45 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E069751B1CA2624F00CFAD45 /* libxml2.tbd */; };
+		E069751E1CA2626400CFAD45 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E069751D1CA2626400CFAD45 /* libxml2.tbd */; };
 		E0754D841A95128900222E99 /* SimpleXPath.h in Headers */ = {isa = PBXBuildFile; fileRef = E0754D831A95128900222E99 /* SimpleXPath.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E0754D8A1A95128900222E99 /* SimpleXPath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0754D7E1A95128900222E99 /* SimpleXPath.framework */; };
 		E0754D911A95128900222E99 /* AtomXPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0754D901A95128900222E99 /* AtomXPathTests.swift */; };
 		E0754D9C1A95175A00222E99 /* XMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0754D9B1A95175A00222E99 /* XMLDocument.swift */; };
-		E0754DA91A95B6DE00222E99 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E0754DA81A95B6DE00222E99 /* libxml2.2.dylib */; };
 		E0754DAE1A95D20D00222E99 /* XMLElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0754DAD1A95D20D00222E99 /* XMLElement.swift */; };
 		E0781D841A97605B004DC063 /* MultipleDefaultNamespaces.xml in Resources */ = {isa = PBXBuildFile; fileRef = E0781D831A97605B004DC063 /* MultipleDefaultNamespaces.xml */; };
 		E0781D861A976078004DC063 /* atom.xml in Resources */ = {isa = PBXBuildFile; fileRef = E0781D851A976078004DC063 /* atom.xml */; };
@@ -27,7 +28,6 @@
 		E0E451571B47CFE800FA74B7 /* XMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0754D9B1A95175A00222E99 /* XMLDocument.swift */; };
 		E0E451581B47CFE800FA74B7 /* XMLElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0754DAD1A95D20D00222E99 /* XMLElement.swift */; };
 		E0E451591B47CFF900FA74B7 /* SimpleXPath.h in Headers */ = {isa = PBXBuildFile; fileRef = E0754D831A95128900222E99 /* SimpleXPath.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E0E4515E1B47D01A00FA74B7 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E0754DA81A95B6DE00222E99 /* libxml2.2.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +45,8 @@
 		E0594F1D1A9989A800BF988A /* MultipleDefaultNamespacesXPathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipleDefaultNamespacesXPathTests.swift; sourceTree = "<group>"; };
 		E0594F1F1A998FCB00BF988A /* AttributeWithNS.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = AttributeWithNS.xml; sourceTree = "<group>"; };
 		E0594F221A998FFF00BF988A /* AttributeNSXPathTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributeNSXPathTests.swift; sourceTree = "<group>"; };
+		E069751B1CA2624F00CFAD45 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/lib/libxml2.tbd; sourceTree = DEVELOPER_DIR; };
+		E069751D1CA2626400CFAD45 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		E0754D7E1A95128900222E99 /* SimpleXPath.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SimpleXPath.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E0754D821A95128900222E99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E0754D831A95128900222E99 /* SimpleXPath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleXPath.h; sourceTree = "<group>"; };
@@ -52,7 +54,6 @@
 		E0754D8F1A95128900222E99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E0754D901A95128900222E99 /* AtomXPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomXPathTests.swift; sourceTree = "<group>"; };
 		E0754D9B1A95175A00222E99 /* XMLDocument.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XMLDocument.swift; sourceTree = "<group>"; };
-		E0754DA81A95B6DE00222E99 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
 		E0754DAD1A95D20D00222E99 /* XMLElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XMLElement.swift; sourceTree = "<group>"; };
 		E0781D831A97605B004DC063 /* MultipleDefaultNamespaces.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = MultipleDefaultNamespaces.xml; sourceTree = "<group>"; };
 		E0781D851A976078004DC063 /* atom.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = atom.xml; sourceTree = "<group>"; };
@@ -67,7 +68,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E0754DA91A95B6DE00222E99 /* libxml2.2.dylib in Frameworks */,
+				E069751E1CA2626400CFAD45 /* libxml2.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,7 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E0E4515E1B47D01A00FA74B7 /* libxml2.2.dylib in Frameworks */,
+				E069751C1CA2624F00CFAD45 /* libxml2.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,7 +153,8 @@
 			isa = PBXGroup;
 			children = (
 				E0781D891A989C70004DC063 /* StringExtension.swift */,
-				E0754DA81A95B6DE00222E99 /* libxml2.2.dylib */,
+				E069751B1CA2624F00CFAD45 /* libxml2.tbd */,
+				E069751D1CA2626400CFAD45 /* libxml2.tbd */,
 				E0754D821A95128900222E99 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -270,7 +272,7 @@
 		E0754D751A95128900222E99 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftMigration = 0700;
+				LastSwiftMigration = 0730;
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = lazyapps;
@@ -476,7 +478,6 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Applications/Xcode63-Beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include",
 					"$(SDKROOT)/usr/include/libxml2",
 				);
 				INFOPLIST_FILE = SimpleXPath/Info.plist;
@@ -502,7 +503,6 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Applications/Xcode63-Beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include",
 					"$(SDKROOT)/usr/include/libxml2",
 				);
 				INFOPLIST_FILE = SimpleXPath/Info.plist;
@@ -520,6 +520,7 @@
 		E0754D981A95128900222E99 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -527,7 +528,6 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Applications/Xcode63-Beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include",
 					"$(SDKROOT)/usr/include/libxml2",
 				);
 				INFOPLIST_FILE = SimpleXPathTests/Info.plist;
@@ -541,10 +541,10 @@
 		E0754D991A95128900222E99 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Applications/Xcode63-Beta.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include",
 					"$(SDKROOT)/usr/include/libxml2",
 				);
 				INFOPLIST_FILE = SimpleXPathTests/Info.plist;
@@ -571,7 +571,6 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SDKROOT)/usr/include/libxml2",
 				);
 				INFOPLIST_FILE = "SimpleXPath/Info-OSX.plist";
@@ -598,7 +597,6 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SDKROOT)/usr/include/libxml2",
 				);
 				INFOPLIST_FILE = "SimpleXPath/Info-OSX.plist";

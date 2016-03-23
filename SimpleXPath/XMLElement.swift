@@ -85,7 +85,7 @@ public extension XMLElement {
     return AnySequence {
       _ -> AnyGenerator<XMLElement> in
       var n = c
-      return anyGenerator {
+      return AnyGenerator {
         if n == nil {
           return nil
         }

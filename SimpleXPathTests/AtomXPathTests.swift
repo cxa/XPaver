@@ -35,7 +35,7 @@ class AtomXPathTests: XCTestCase {
       var i = 0
       for el in els {
         XCTAssertEqual(el.tag!, "link", "Tag should be `link`")
-        i++
+        i += 1
       }
       
       XCTAssertEqual(i, 3, "Links count should be 3")
@@ -50,7 +50,7 @@ class AtomXPathTests: XCTestCase {
       for el in els {
         XCTAssertEqual(el.tag!, "language", "Tag should be `language`")
         XCTAssertEqual(el.content!, "en-us", "Element content should be `en-us`")
-        i++
+        i += 1
       }
       
       XCTAssertEqual(i, 1, "Languages count should be 1")
