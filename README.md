@@ -21,37 +21,45 @@ If you add `SimpleXPath` inside your project dirctory, the `Import Paths` should
 
 Consider following XML:
 
-	<?xml version="1.0" encoding="utf-8"?>
-	<feed>
-	  <title>Example Feed</title>
-	  <entry>
-	    <link href="http://example.org/2003/12/13/atom03"/>
-	    <link rel="alternate" type="text/html" href="http://example.org/2003/12/13/atom03.html"/>
-	    <link rel="edit" href="http://example.org/2003/12/13/atom03/edit"/>
-	    <author>
-	      <name>John Doe</name>
-	      <email>johndoe@example.com</email>
-	    </author>
-	  </entry>
-	</feed>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<feed>
+  <title>Example Feed</title>
+  <entry>
+    <link href="http://example.org/2003/12/13/atom03"/>
+    <link rel="alternate" type="text/html" href="http://example.org/2003/12/13/atom03.html"/>
+    <link rel="edit" href="http://example.org/2003/12/13/atom03/edit"/>
+    <author>
+      <name>John Doe</name>
+      <email>johndoe@example.com</email>
+    </author>
+  </entry>
+</feed>
+```
 
 ### Create a XML Document
 
-	let doc = XMLDocuemnt(string: xmlStr)
-	
+```swift
+let doc = XMLDocuemnt(string: xmlStr)
+```	
 ### Locating All Elements
 
-	let links = doc?.selectElements('//links')
-	
+```swift
+let links = doc?.selectElements('//links')
+```	
 or more spefic:
 
-	let links = doc?.selectElements('/feed/entry/links')
+```swift
+let links = doc?.selectElements('/feed/entry/links')
+```
 	
 This will return a sequence of `XMLElement`, you can use `for link in links { ... }` to iterate each element.
 	
 ### Locating First Element
 
-	let el = doc?.selectFirstElement("/feed/entry/link")
+```swift
+let el = doc?.selectFirstElement("/feed/entry/link")
+```
 	
 This will return first `XMLElement` for `link` under `/feed/entry`.
 
@@ -69,46 +77,52 @@ You can also apply XPath to `XMLElement`.
 
 Using below properties and or methods to access informations.
 
-	/// Tag name
-    var tag: String? { get }
+```swift
+/// Tag name
+var tag: String? { get }
 
-    /// Content
-    var content: String? { get }
+/// Content
+var content: String? { get }
 
-    /// Parent
-    var parent: SimpleXPath.XMLElement? { get }
+/// Parent
+var parent: SimpleXPath.XMLElement? { get }
 
-    /// Children
-    var children: SequenceOf<SimpleXPath.XMLElement>? { get }
+/// Children
+var children: SequenceOf<SimpleXPath.XMLElement>? { get }
 
-    /// First child
-    var firstChild: SimpleXPath.XMLElement? { get }
+/// First child
+var firstChild: SimpleXPath.XMLElement? { get }
 
-    /// Get child at `index`,
-    /// If `index` is overflow, return nil
-    func childAtIndex(index: Int) -> SimpleXPath.XMLElement?
+/// Get child at `index`,
+/// If `index` is overflow, return nil
+func childAtIndex(index: Int) -> SimpleXPath.XMLElement?
 
-    /// Previous sibling
-    var prev: SimpleXPath.XMLElement? { get }
+/// Previous sibling
+var prev: SimpleXPath.XMLElement? { get }
 
-    /// Next sibling
-    var next: SimpleXPath.XMLElement? { get }
+/// Next sibling
+var next: SimpleXPath.XMLElement? { get }
 
-    /// Attributes
-    var attributes: SequenceOf<SimpleXPath.XMLAttribute>? { get }
+/// Attributes
+var attributes: SequenceOf<SimpleXPath.XMLAttribute>? { get }
 
-    /// Attribute value
-    func valueForAttribue(attr: String, inNamespace nspace: String? = default) -> String?
-    
+/// Attribute value
+func valueForAttribue(attr: String, inNamespace nspace: String? = default) -> String?
+```
+
 ## Default Namespaces
 
 In real world, most XML document contains one or more default namespaces, e.g. Atom document will look like this:
 
-	<feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+```xml
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+```
 	
 All elements without a prefix inside Atom document will be under the default namespace `http://www.w3.org/2005/Atom`. According to the XPath spec, you can't ignore the default namespace, XPath like `/feed/entry/links` won't work. You need to define a prefix for the default namespace such as `atom`, and reconstruct the XPath as `/atom:feed/atom:entry/atom:links`. `XMLDocument` provides a method for registering default namespace:
 
-	func registerDefaultNamespace(namespaceHref: String, usingPrefix prefix: String)
+```swift
+func registerDefaultNamespace(namespaceHref: String, usingPrefix prefix: String)
+```
 	
 The real usage will be `doc?.registerDefaultNamespace("http://www.w3.org/2005/Atom", usingPrefix: "atom")`.
 	
