@@ -13,15 +13,13 @@ public enum XMLDocumentType: Int {
   case HTML
 }
 
-public struct XMLDocument {
+public final class XMLDocument {
   
   public let data: NSData
   
   public let documentType: XMLDocumentType
   
   public let encoding: NSStringEncoding
-  
-  public let rootElement: XMLElement
   
   public init?(data d: NSData, documentType type: XMLDocumentType = .XML, encoding enc: NSStringEncoding = NSUTF8StringEncoding) {
     data = d
@@ -39,32 +37,30 @@ public struct XMLDocument {
       _xmlDoc = htmlReadMemory(buffer, size, nil, ianaChar, Int32(HTML_PARSE_RECOVER.rawValue | HTML_PARSE_NOBLANKS.rawValue | HTML_PARSE_NOWARNING.rawValue | HTML_PARSE_NOERROR.rawValue))
     }
     
-    _docWrapper = _XMLDocWrapper(doc: _xmlDoc)
-    let root = xmlDocGetRootElement(_xmlDoc)
-    rootElement = XMLElement(_node: root)
-    if _xmlDoc == nil || root == nil {
-      return nil
-    }
-    
-    xmlNewProp(root, _doctypeprop, "\(type.rawValue)")
+    _root = xmlDocGetRootElement(_xmlDoc)
+    if _xmlDoc == nil || _root == nil { return nil }
   }
   
-  public init?(string s: String, documentType type: XMLDocumentType = .XML, encoding enc: NSStringEncoding = NSUTF8StringEncoding) {
-    if let data = s.dataUsingEncoding(enc),
-       let doc = XMLDocument(data: data, documentType: type, encoding: enc) {
-      self = doc
-    } else {
-      return nil
-    }
+  public convenience init?(string s: String, documentType type: XMLDocumentType = .XML, encoding enc: NSStringEncoding = NSUTF8StringEncoding) {
+    guard let data = s.dataUsingEncoding(enc) else { return nil }
+    self.init(data: data, documentType: type, encoding: enc)
   }
   
-  private let _xmlDoc: xmlDocPtr
+  deinit {
+    xmlFreeDoc(_xmlDoc)
+  }
   
-  private let _docWrapper: _XMLDocWrapper
+  internal let _xmlDoc: xmlDocPtr
+  
+  internal let _root: xmlNodePtr
   
 }
 
 public extension XMLDocument {
+  
+  func rootElement() -> XMLElement {
+    return XMLElement(_root, self)
+  }
   
   func registerDefaultNamespace(namespaceHref: String, usingPrefix prefix: String) {
     xmlNewNs(xmlDocGetRootElement(_xmlDoc), namespaceHref.xmlCharPointer, prefix.xmlCharPointer)
@@ -74,12 +70,12 @@ public extension XMLDocument {
 
 extension XMLDocument: XPathLocating {
   
-  public func selectElements(withXPath: String) -> AnySequence<XMLElement>? {
-    return rootElement.selectElements(withXPath)
+  public func selectElements(withXPath: String) -> [XMLElement] {
+    return rootElement().selectElements(withXPath)
   }
   
   public func selectFirstElement(withXPath: String) -> XMLElement? {
-    return rootElement.selectFirstElement(withXPath)
+    return rootElement().selectFirstElement(withXPath)
   }
   
 }
@@ -87,23 +83,7 @@ extension XMLDocument: XPathLocating {
 extension XMLDocument: XPathFunctionEvaluating {
   
   public func evaluate(XPathFunction: String) -> XPathFunctionResult? {
-    return rootElement.evaluate(XPathFunction)
-  }
-  
-}
-
-let _doctypeprop = "__simple_xpath_doctype"
-
-private final class _XMLDocWrapper {
-  
-  let doc: xmlDocPtr
-  
-  init(doc: xmlDocPtr) {
-    self.doc = doc
-  }
-  
-  deinit {
-    xmlFreeDoc(doc)
+    return rootElement().evaluate(XPathFunction)
   }
   
 }

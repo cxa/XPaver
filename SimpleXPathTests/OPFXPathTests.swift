@@ -36,7 +36,7 @@ class OPFXPathTests: XCTestCase {
   }
   
   func testNonElementXPath() {
-    XCTAssertTrue(opf.selectElements("//namespace::*") == nil, "selectElements should be nil for `//namespace::*`")
+    XCTAssertTrue(opf.selectElements("//namespace::*").isEmpty, "selectElements should be nil for `//namespace::*`")
   }
   
 }

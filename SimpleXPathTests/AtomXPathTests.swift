@@ -72,11 +72,11 @@ class AtomXPathTests: XCTestCase {
   }
   
   func testChildAccess() {
-    if let titleEl = atomDoc?.rootElement.firstChild {
+    if let titleEl = atomDoc?.rootElement().firstChild {
       XCTAssertEqual(titleEl.tag!, "title", "First child should be `title`")
     }
     
-    if let entryEl = atomDoc?.rootElement.childAtIndex(6) {
+    if let entryEl = atomDoc?.rootElement().childAtIndex(6) {
       XCTAssertEqual(entryEl.tag!, "entry", "Child at index 6 should be `entry`")
     }
   }
@@ -140,7 +140,7 @@ class AtomXPathTests: XCTestCase {
   }
   
   func testSubscript() {
-    if let link = atomDoc?.rootElement.childAtIndex(2) {
+    if let link = atomDoc?.rootElement().childAtIndex(2) {
       XCTAssertEqual(link["rel"], "self", "link rel should be `self`")
     }
   }

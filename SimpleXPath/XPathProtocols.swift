@@ -14,7 +14,7 @@ public enum XPathFunctionResult {
 
 protocol XPathLocating {
   
-  func selectElements(withXPath: String) -> AnySequence<XMLElement>?
+  func selectElements(withXPath: String) -> [XMLElement]
   
   func selectFirstElement(withXPath: String) -> XMLElement?
   

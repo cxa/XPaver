@@ -10,9 +10,16 @@ import libxml2
 
 public typealias XMLAttribute = (name: String, value: String?)
 
-public struct XMLElement {
+public final class XMLElement {
   
   let _node: xmlNodePtr
+  
+  let _doc: XMLDocument
+  
+  init(_ n: xmlNodePtr, _ doc: XMLDocument) {
+    _node = n
+    _doc = doc
+  }
   
 }
 
@@ -20,9 +27,7 @@ public extension XMLElement {
   
   /// document type
   var documentType: XMLDocumentType {
-    let root = xmlDocGetRootElement( _node.memory.doc)
-    let name = xmlGetProp(root, _doctypeprop)
-    return strcmp(unsafeBitCast(name, UnsafePointer<Int8>.self), "0") == 0 ? .XML : .HTML
+    return _doc.documentType
   }
   
   /// Tag name
@@ -49,7 +54,7 @@ public extension XMLElement {
     }
     
     let buf = xmlBufferCreate()
-    let size = documentType == .XML ? xmlNodeDump(buf, _node.memory.doc, _node, 0, 0) : htmlNodeDump(buf, _node.memory.doc, _node)
+    let size = documentType == .XML ? xmlNodeDump(buf, _doc._xmlDoc, _node, 0, 0) : htmlNodeDump(buf, _doc._xmlDoc, _node)
     if size == -1 { return nil }
     let cnt = _convertXmlCharPointerToString(buf.memory.content)
     xmlBufferFree(buf)
@@ -72,25 +77,21 @@ public extension XMLElement {
       return nil
     }
     
-    return XMLElement(_node: p)
+    return XMLElement(p, _doc)
   }
   
   /// Children
   var children: AnySequence<XMLElement>? {
     let c = _node.memory.children
-    if c == nil {
-      return nil
-    }
+    if c == nil {  return nil  }
     
     return AnySequence {
       _ -> AnyGenerator<XMLElement> in
       var n = c
       return AnyGenerator {
-        if n == nil {
-          return nil
-        }
+        if n == nil { return nil }
         
-        let el = XMLElement(_node: n)
+        let el = XMLElement(n, self._doc)
         n = n.memory.next
         return el
       }
@@ -129,7 +130,7 @@ public extension XMLElement {
       return nil
     }
     
-    return XMLElement(_node: p)
+    return XMLElement(p, _doc)
   }
   
   /// Next sibling
@@ -139,30 +140,25 @@ public extension XMLElement {
       return nil
     }
     
-    return XMLElement(_node: n)
+    return XMLElement(n, _doc)
   }
   
   /// Attributes
   var attributes: AnySequence<XMLAttribute>? {
     let properties = _node.memory.properties
-    if properties == nil {
-      return nil
-    }
+    if properties == nil { return nil }
     
-    return AnySequence {
-      _ -> AnyGenerator<XMLAttribute> in
+    return AnySequence { _ -> AnyGenerator<XMLAttribute> in
       var p = properties
       return AnyGenerator {
-        if p == nil {
-          return nil
-        }
+        if p == nil { return nil }
         
         let cur = p
-        p = p.memory.next
         let n = self._convertXmlCharPointerToString(cur.memory.name) ?? ""
         let v = xmlGetProp(self._node, cur.memory.name)
         let attr = XMLAttribute(n, self._convertXmlCharPointerToString(v))
         if v != nil { free(v) }
+        p = p.memory.next
         return attr
       }
     }
@@ -182,50 +178,12 @@ public extension XMLElement {
 // MARK: implement XPathLocating
 extension XMLElement: XPathLocating {
   
-  public func selectElements(withXPath: String) -> AnySequence<XMLElement>? {
-    let ctx = xmlXPathNewContext(_node.memory.doc)
-    ctx.memory.node = _node
-    _registerNS(ctx, xpath: withXPath)
-    let xpathObj = xmlXPathEval(withXPath.xmlCharPointer, ctx)
-    if xpathObj == nil ||
-      xpathObj.memory.type.rawValue != XPATH_NODESET.rawValue ||
-      xpathObj.memory.nodesetval == nil ||
-      xpathObj.memory.nodesetval.memory.nodeNr == 0 {
-        if xpathObj != nil { xmlXPathFreeObject(xpathObj) }
-        return nil
-    }
-    
-    let nodeset = xpathObj.memory.nodesetval.memory
-    if nodeset.nodeTab.memory.memory.type.rawValue != XML_ELEMENT_NODE.rawValue { return nil }
-    let seq = AnySequence {
-      _ -> AnyGenerator<XMLElement> in
-      let max = Int(nodeset.nodeNr) - 1
-      var i = 0
-      return AnyGenerator {
-        if i > max {
-          xmlXPathFreeContext(ctx)
-          xmlXPathFreeObject(xpathObj)
-          return nil
-        }
-        
-        let node = nodeset.nodeTab.advancedBy(i)
-        let el = XMLElement(_node: node.memory)
-        i += 1
-        return el
-      }
-    }
-    
-    return seq
+  public func selectElements(withXPath: String) -> [XMLElement] {
+    return _selectElements(withXPath)
   }
   
   public func selectFirstElement(withXPath: String) -> XMLElement? {
-    if let els = selectElements(withXPath) {
-      for el in els {
-        return el
-      }
-    }
-    
-    return nil
+    return _selectElements(withXPath, selectFirstOnly: true).first
   }
   
 }
@@ -238,10 +196,12 @@ extension XMLElement: XPathFunctionEvaluating {
     ctx.memory.node = _node
     _registerNS(ctx, xpath: function)
     let xpathObj = xmlXPathEval(function.xmlCharPointer, ctx)
-    if xpathObj == nil {
-      return nil
+    defer {
+      xmlXPathFreeContext(ctx)
+      if xpathObj != nil { xmlXPathFreeObject(xpathObj) }
     }
     
+    if xpathObj == nil {  return nil  }
     let t = xpathObj.memory.type.rawValue
     let result: XPathFunctionResult?
     if t == XPATH_BOOLEAN.rawValue {
@@ -261,7 +221,6 @@ extension XMLElement: XPathFunctionEvaluating {
       result = nil
     }
     
-    xmlXPathFreeObject(xpathObj)
     return result
   }
   
@@ -279,6 +238,40 @@ public extension XMLElement {
 // MARK: privates
 private extension XMLElement {
   
+  func _selectElements(withXPath: String, selectFirstOnly: Bool = false) -> [XMLElement] {
+    let ctx = xmlXPathNewContext(_doc._xmlDoc)
+    ctx.memory.node = _node
+    _registerNS(ctx, xpath: withXPath)
+    let xpathObj = xmlXPathEval(withXPath.xmlCharPointer, ctx)
+    defer {
+      xmlXPathFreeContext(ctx)
+      if xpathObj != nil { xmlXPathFreeObject(xpathObj) }
+    }
+    
+    if xpathObj == nil ||
+      xpathObj.memory.type.rawValue != XPATH_NODESET.rawValue ||
+      xpathObj.memory.nodesetval == nil ||
+      xpathObj.memory.nodesetval.memory.nodeNr == 0 {
+      return []
+    }
+    
+    let nodeset = xpathObj.memory.nodesetval.memory
+    if nodeset.nodeTab.memory.memory.type.rawValue != XML_ELEMENT_NODE.rawValue { return [] }
+    var els: [XMLElement] = []
+    let nr = Int(nodeset.nodeNr)
+    var i = 0
+    var node = nodeset.nodeTab
+    while i < nr && node != nil {
+      let el = XMLElement(node.memory, self._doc)
+      els.append(el)
+      i += 1
+      node = nodeset.nodeTab.advancedBy(i)
+      if selectFirstOnly { break }
+    }
+    
+    return els
+  }
+  
   func _registerNS(ctx: xmlXPathContextPtr, xpath: String) {
     if let prefixsInsideXPath = xpath.namespacePrefixs {
       var registeredNS = Set<String>()
@@ -294,8 +287,8 @@ private extension XMLElement {
       
       let unreg = prefixsInsideXPath.subtract(registeredNS)
       for prefix in unreg  {
-        let root = xmlDocGetRootElement(_node.memory.doc)
-        let ns = xmlSearchNs(_node.memory.doc, root, prefix.xmlCharPointer)
+        let root = _doc._root
+        let ns = xmlSearchNs(_doc._xmlDoc, root, prefix.xmlCharPointer)
         if ns != nil {
           xmlXPathRegisterNs(ctx, ns.memory.prefix, ns.memory.href)
         } else {
