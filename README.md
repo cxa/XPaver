@@ -1,139 +1,97 @@
-# SimpleXPath
+# XPaver
 
-Locate XML element and evaluate XPath function. Written in Swift 1.2.
+Make XML navigation by XPath easier.
 
-## Installation
+## Install
 
-`SimpleXPath` is based on `libxml2`.
+Swift package only. Add this repo url to your package dependencies. Xcode 11 supports by default.
 
-Drag `SimpleXPath.xcodeproj` into your project, add `SimpleXPath.framework` and `libxml2.2.dylib`to “Linked Frameworks and Libraries” under “General” tab of target settings. 
+## Usage
 
-![General Tab](gsettings.png)
+### Initialize a `Doc` first
 
- Because currently Xcode doesn't support 3rd C libs directly inside a framework, install `SimpleXPath` is a little tricky. To make it work, don't forget to add correct path which contains `SimpleXPath` to target's `Build Settings` -> `Swift Compiler - Search Paths` -> `Import Paths`. As below shows, `SimpleXPath` is on the same directory as the target project.
+```swift
+  let xmlDoc = try! Doc(fileURL: assetURL(forName: "xml.xml"), kind: .xml)
+  // or if you want to use on HTML
+  let htmlDoc = try! Doc(fileURL: assetURL(forName: "html.html"), kind: .html)
+```
 
-![Build Settings Example](bsettings.png)
+### Navigate by XPath
 
-If you add `SimpleXPath` inside your project dirctory, the `Import Paths` should be `$(SRCROOT)/SimpleXPath`
+```swift
+// func select(xpath: String) -> [Node]
+let nodes = htmlDoc.root.select(xpath: "//p") // Select all `p` on root node:
 
+// func first(xpath: String) -> Node?
+let p = htmlDoc.root.first(xpath: "//p")  // Select first `p` on root node:
+let span = p.first("./span")                 // Select first child span on `p`
+```
 
-## Example
+### Evaluate XPath Expression
 
-Consider following XML:
+```swift
+func eval(expr: String) -> Node.EvalResult?
+
+// count how many p tags
+let count = htmlDoc.root.eval(expr: "count(//p)")
+```
+
+### Node Info
+
+```swift
+var tag: String?
+var content: String?
+var rawContent: String?
+var innerRawContent: String?
+var attributes: AnySequence<Node.Attribute>?
+func value(forAttribute name: String) -> String?
+```
+
+### Node Hierarchies
+
+```swift
+var parent: Node?
+var childNodes: AnySequence<Node>?
+var firstNode: Node?
+func childNode(at index: Int) -> Node?
+var prev: Node?
+var next: Node?
+```
+
+### Advanced usage on namespace
+
+By default, `XPaver` will solve namespaces for you internally, you don't need to care namespaces if document has only one default namespace.
+
+But if you encounter a XML which contains more than one namespace like this:
 
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
-<feed>
-  <title>Example Feed</title>
-  <entry>
-    <link href="http://example.org/2003/12/13/atom03"/>
-    <link rel="alternate" type="text/html" href="http://example.org/2003/12/13/atom03.html"/>
-    <link rel="edit" href="http://example.org/2003/12/13/atom03/edit"/>
-    <author>
-      <name>John Doe</name>
-      <email>johndoe@example.com</email>
-    </author>
-  </entry>
-</feed>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<person xmlns="http://www.your.example.com/xml/person">
+  <name>Rob</name>
+  <age>37</age>
+  <homecity xmlns="http://www.my.example.com/xml/cities">
+    <name>London</name>
+    <lat>123.000</lat>
+    <long>0.00</long>
+  </homecity>
+</person>
 ```
 
-### Create a XML Document
+You need to register namespaces and write namespaces in XPath directly:
 
 ```swift
-let doc = XMLDocuemnt(string: xmlStr)
-```	
-### Locating All Elements
-
-```swift
-let links = doc?.selectElements('//links')
-```	
-or more spefic:
-
-```swift
-let links = doc?.selectElements('/feed/entry/links')
-```
-	
-This will return a sequence of `XMLElement`, you can use `for link in links { ... }` to iterate each element.
-	
-### Locating First Element
-
-```swift
-let el = doc?.selectFirstElement("/feed/entry/link")
-```
-	
-This will return first `XMLElement` for `link` under `/feed/entry`.
-
-### Evaluate XPath Function
-
-	let result = doc?.evaluate("count(/feed/entry/link)")
-	
-This will return a `XPathFunctionResult`, its an `enum` and contains double value 3.
-
-You can find more usage under test cases.
-
-## `XMLElement`
-
-You can also apply XPath to `XMLElement`.
-
-Using below properties and or methods to access informations.
-
-```swift
-/// Tag name
-var tag: String? { get }
-
-/// Content
-var content: String? { get }
-
-/// Parent
-var parent: SimpleXPath.XMLElement? { get }
-
-/// Children
-var children: SequenceOf<SimpleXPath.XMLElement>? { get }
-
-/// First child
-var firstChild: SimpleXPath.XMLElement? { get }
-
-/// Get child at `index`,
-/// If `index` is overflow, return nil
-func childAtIndex(index: Int) -> SimpleXPath.XMLElement?
-
-/// Previous sibling
-var prev: SimpleXPath.XMLElement? { get }
-
-/// Next sibling
-var next: SimpleXPath.XMLElement? { get }
-
-/// Attributes
-var attributes: SequenceOf<SimpleXPath.XMLAttribute>? { get }
-
-/// Attribute value
-func valueForAttribue(attr: String, inNamespace nspace: String? = default) -> String?
+let mnsXmlDoc = try! Doc(fileURL: url, kind: .xml)
+mnsXmlDoc.register(namespaceURI: "http://www.your.example.com/xml/person", forPrefix: "p")
+mnsXmlDoc.register(namespaceURI: "http://www.my.example.com/xml/cities", forPrefix: "c")
+let cityName = mnsXmlDoc.root.first(xpath: "/p:person/c:homecity/c:name")
 ```
 
-## Default Namespaces
-
-In real world, most XML document contains one or more default namespaces, e.g. Atom document will look like this:
-
-```xml
-<feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
-```
-	
-All elements without a prefix inside Atom document will be under the default namespace `http://www.w3.org/2005/Atom`. According to the XPath spec, you can't ignore the default namespace, XPath like `/feed/entry/links` won't work. You need to define a prefix for the default namespace such as `atom`, and reconstruct the XPath as `/atom:feed/atom:entry/atom:links`. `XMLDocument` provides a method for registering default namespace:
-
-```swift
-func registerDefaultNamespace(namespaceHref: String, usingPrefix prefix: String)
-```
-	
-The real usage will be `doc?.registerDefaultNamespace("http://www.w3.org/2005/Atom", usingPrefix: "atom")`.
-	
-For namespaces that contain a prefix such as `xmlns:dc="http://purl.org/dc/elements/1.1/"`, you don't need to do anything for XPath as `//dc:language`.
-		
 ## About Me
 
-* Twitter: [@_cxa](https://twitter.com/_cxa)
-* Apps available in App Store: <http://lazyapps.com>
-* PayPal: xianan.chen+paypal 📧 gmail.com, buy me a cup of coffee if you find it's useful for you.
+- Twitter: [@_cxa](https://twitter.com/_cxa)
+- Apps available on the App Store: <http://lazyapps.com>
+- PayPal: xianan.chen+paypal 📧 gmail.com, buy me a cup of coffee if you find this is useful for you
 
-## License
+## LICENSE
 
-Under the MIT license. See the LICENSE file for more information. For non attributed commercial lisence, please contact me.
+MIT.

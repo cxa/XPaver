@@ -1,9 +1,0 @@
-<person xmlns="http://www.your.example.com/xml/person">
-    <name>Rob</name>
-    <age>37</age>
-    <homecity xmlns="http://www.my.example.com/xml/cities">
-        <name>London</name>
-        <lat>123.000</lat>
-        <long>0.00</long>
-    </homecity>
-</person>

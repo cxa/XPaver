@@ -1,5 +1,0 @@
-<x xmlns:n1="http://www.w3.org" 
-   xmlns="http://www.w3.org">
-  <good a="1"     b="2" />
-  <good a="1"     n1:a="2" />
-</x>
