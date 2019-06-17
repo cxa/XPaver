@@ -309,10 +309,7 @@ private extension Node {
       xmlXPathFreeContext(ctx)
       xmlXPathFreeObject(xpathObj)
     }
-    if xpathObj.pointee.type.rawValue != XPATH_NODESET.rawValue ||
-      xpathObj.pointee.nodesetval == nil {
-      return []
-    }
+    if xpathObj.pointee.type != XPATH_NODESET || xpathObj.pointee.nodesetval == nil { return [] }
     let numNodes = Int( xpathObj.pointee.nodesetval.pointee.nodeNr)
     if numNodes < 1 { return [] }
     let nodeset = xpathObj.pointee.nodesetval.pointee
