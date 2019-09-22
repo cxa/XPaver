@@ -19,7 +19,9 @@ let package = Package(
     // Targets can depend on other targets in this package, and on products in packages which this package depends on.
     .target(
       name: "XPaver",
-      dependencies: []),
+      dependencies: [],
+      swiftSettings:[.unsafeFlags(["-I$SDKROOT/usr/include/libxml2"])],
+      linkerSettings: [.linkedLibrary("xml2")]),
     .testTarget(
       name: "XPaverTests",
       dependencies: ["XPaver"]),
