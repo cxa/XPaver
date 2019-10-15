@@ -52,6 +52,13 @@ public final class Doc: Equatable {
     if _root == nil { throw Error.noXMLRoot }
   }
 
+    convenience init(xmlString: String, kind: Kind) throws{
+        guard let data = xmlString.data(using: .utf8)else{
+            throw Error.invalidSourceData
+        }
+        try self.init(data: data, kind: kind)
+    }
+    
   convenience init(
     fileURL: URL,
     readingOptions: Data.ReadingOptions = [],
