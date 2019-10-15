@@ -14,6 +14,9 @@ Swift package only. Add this repo url to your package dependencies. Xcode 11 sup
   let xmlDoc = try! Doc(fileURL: assetURL(forName: "xml.xml"), kind: .xml)
   // or if you want to use on HTML
   let htmlDoc = try! Doc(fileURL: assetURL(forName: "html.html"), kind: .html)
+  // you can also init from data or string
+  let dataDoc = try! Doc(data: #<data>, kind: .xml)
+  let stringDoc =  try! Doc(string: "<html><body>Hello World</body></html>", kind: .html)
 ```
 
 ### Navigate by XPath
@@ -88,7 +91,7 @@ let cityName = mnsXmlDoc.root.first(xpath: "/p:person/c:homecity/c:name")
 
 ## About Me
 
-- Twitter: [@_cxa](https://twitter.com/_cxa)
+- Twitter: [@\_cxa](https://twitter.com/_cxa)
 - Apps available on the App Store: <http://lazyapps.com>
 - PayPal: xianan.chen+paypal 📧 gmail.com, buy me a cup of coffee if you find this is useful for you
 
