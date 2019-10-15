@@ -32,8 +32,7 @@ public final class Doc: Equatable {
       data.withUnsafeBytes({ rbp in rbp.baseAddress?.assumingMemoryBound(to: Int8.self) })
       else { throw Error.invalidSourceData }
     let cfenc = CFStringConvertNSStringEncodingToEncoding(encoding.rawValue)
-    guard
-      let iana = CFStringConvertEncodingToIANACharSetName(cfenc) as String?
+    guard let iana = CFStringConvertEncodingToIANACharSetName(cfenc) as String?
       else { throw Error.invalidEncoding }
     switch kind {
     case .xml:
@@ -50,8 +49,8 @@ public final class Doc: Equatable {
     if _root == nil { throw Error.noXMLRoot }
   }
   
-  convenience init(xmlString: String, kind: Kind) throws {
-    guard let data = xmlString.data(using: .utf8) else {
+  convenience init(string: String, kind: Kind) throws {
+    guard let data = string.data(using: .utf8) else {
       throw Error.invalidSourceData
     }
     try self.init(data: data, kind: kind)

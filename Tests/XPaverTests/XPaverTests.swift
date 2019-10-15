@@ -5,7 +5,15 @@ final class XPaverTests: XCTestCase {
   lazy var xmlDoc = try! Doc(fileURL: Self.assetURL(forName: "xml.xml"), kind: .xml)
   lazy var mnsXmlDoc = try! Doc(fileURL: Self.assetURL(forName: "multiple-default-ns.xml"), kind: .xml)
   lazy var htmlDoc = try! Doc(fileURL: Self.assetURL(forName: "html.html"), kind: .html)
-  lazy var xmlStrDoc = try! Doc(xmlString: "<?xml version=\"1.0\" encoding=\"UTF-8\"?><note><to>Tove</to><from>Jani</from><heading>Reminder</heading><body>Don't forget me this weekend!</body></note>", kind: .xml)
+  lazy var xmlStrDoc = try! Doc(string: """
+    <?xml version="1.0" encoding="UTF-8"?>
+    <note>
+      <to>Tove</to>
+      <from>Jani</from>
+      <heading>Reminder</heading>
+      <body>Don't forget me this weekend!</body>
+    </note>
+    """, kind: .xml)
   
   func testTag() {
     XCTAssertEqual(xmlDoc.root.tag, "package")
